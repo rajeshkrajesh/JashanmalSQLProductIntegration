@@ -1,6 +1,14 @@
 package com.rixyncs.Sqlconnector;
 
-public class Product {
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
+import java.util.TimeZone;
+//getter and setter method of arraylist
+public class ProductGetSet {
 	
   private String productName;
   private String ProductDescription;
@@ -32,9 +40,11 @@ public class Product {
   private String vatcategory;
   private String taxrate;
   
+
   
   
-  public Product() {}
+  
+  public ProductGetSet() {}
   
   public String getproductName() { return productName; }
   
@@ -42,7 +52,9 @@ public class Product {
     this.productName = productName;
   }
   
-  public String getProductDescription() { return ProductDescription; }
+  public String getProductDescription() { 
+	  return ProductDescription; 
+	  }
   
   public void setProductDescription(String ProductDescription) {
     this.ProductDescription = ProductDescription;
@@ -206,16 +218,30 @@ public String getItemlostupdatedate() {
 	return itemlostupdatedate;
 }
 
-public void setItemlostupdatedate(String itemlostupdatedate) {
-	this.itemlostupdatedate = itemlostupdatedate;
+public void setItemlostupdatedate(String itemlostupdatedate) throws ParseException {
+	SimpleDateFormat inFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	Date inDate = inFormatter.parse(itemlostupdatedate);
+    SimpleDateFormat outFormatter = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+    String output = outFormatter.format(inDate);
+    this.itemlostupdatedate = output;
+  
+	
+	
 }
 
 public String getCreationdate() {
+	
 	return creationdate;
 }
 
-public void setCreationdate(String creationdate) {
-	this.creationdate = creationdate;
+public void setCreationdate(String creationdate) throws ParseException  {
+	
+	SimpleDateFormat inFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	Date inDate = inFormatter.parse(creationdate);
+    SimpleDateFormat outFormatter = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+    String output = outFormatter.format(inDate);
+	this.creationdate = output;
+	 // System.out.println(output);
 }
 
 public String getKwdprice() {

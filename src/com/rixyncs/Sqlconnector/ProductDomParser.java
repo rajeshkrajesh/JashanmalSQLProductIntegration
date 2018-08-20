@@ -43,7 +43,7 @@ public class ProductDomParser
       for (int i = 0; i < nList.getLength(); i++) {
         System.out.println("**************Loop" + i + "******************");
         
-        Product account = new Product();
+        ProductGetSet account = new ProductGetSet();
         
         Node nNode = nList.item(i);
         

@@ -1,5 +1,6 @@
 package com.rixyncs.Sqlconnector;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.Connection;
@@ -9,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,52 +23,76 @@ public class ProductInsert {
 	  static String TodayDate = getTodaydate().toString();
 	  
 	    public static String getTodaydate() {
-	    DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+	    DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
 	    Date date = new Date();
 	    System.out.println(dateFormat.format(date));
 	    return dateFormat.format(date);
 	  }
 	  
 	  static Properties mainProperties = new Properties();
+	
+	/*  public ArrayList<ProductGetSet> testData(int x) {
+		  ArrayList<ProductGetSet> p=new ArrayList();
+		  for(int i=0;i<x;i++)
+		  {
+			  ProductGetSet p1=new ProductGetSet();
+			//  p1.ProductName=i;
+			  p1.setproductName(""+i);
+			  p.add(p1);
+		  }
+		  return p;
+	  }*/
+	  //Main method 
+	  public static void main(String[] args) throws ClassNotFoundException, SQLException, NullPointerException, IOException, ParseException{
 	  
-	  public static void main(String[] args) throws ClassNotFoundException, SQLException, NullPointerException, IOException
-	  {
-	    ProductInsert pi = new ProductInsert();
-	    ArrayList<Product> product = pi.getAllProducts();
+		//ProductGetSet pg= new ProductGetSet();
+		//pg.setCreationdate("2014-03-23 08:34:34.00000");
+		
+		ProductInsert pi = new ProductInsert();
+		//loading the properties life
+	    pi.LoadProperties();
+	    
+	    //calling the sql arraylist
+	    
+	    ArrayList<ProductGetSet> product = pi.getAllProducts();
+	    //ArrayList<ProductGetSet> product=pi.testData(100) ;
+	    
+	    //converting the sql arraylist into zoho xml data
+	    
 	    String[] s = new String[product.size()];
 	    int count=0;
 	    int i = 0;
 	    String row = "<Products>";
 	    for (i = 0; i < product.size(); i++) {
 	      int index = i + 1;
-	      row = row.concat("<row no=\"" + index + "\"><FL val=\"Product Name\"><![CDATA[" + ((Product)product.get(i)).getproductName() + "]]></FL>");
-	      row = row.concat("<FL val=\"Product Description\"><![CDATA[" + ((Product)product.get(i)).getProductDescription() + "]]></FL>");
-	      row = row.concat("<FL val=\"Item Brand Desc\"><![CDATA[" + ((Product)product.get(i)).getItemBrandDesc() + "]]></FL>");
-	      row = row.concat("<FL val=\"Country of Origin\"><![CDATA[" + ((Product)product.get(i)).getCountryofOrigin() + "]]></FL>");
-	      row = row.concat("<FL val=\"Barcode\"><![CDATA[" + ((Product)product.get(i)).getBarcode() + "]]></FL>");
-	      row = row.concat("<FL val=\"Item Size\"><![CDATA[" + ((Product)product.get(i)).getItemsize() + "]]></FL>");
-	      row = row.concat("<FL val=\"Unit Length\"><![CDATA[" + ((Product)product.get(i)).getUnitlength() + "]]></FL>");
-	      row = row.concat("<FL val=\"Unit Width\"><![CDATA[" + ((Product)product.get(i)).getUnitwidth() + "]]></FL>");
-	      row = row.concat("<FL val=\"Unit Height\"><![CDATA[" + ((Product)product.get(i)).getUnitheight() + "]]></FL>");
-	      row = row.concat("<FL val=\"Unit Weight\"><![CDATA[" + ((Product)product.get(i)).getUnitweight() + "]]></FL>");
-	      row = row.concat("<FL val=\"Unit Volume\"><![CDATA[" + ((Product)product.get(i)).getUnitvolume() + "]]></FL>");
-	      row = row.concat("<FL val=\"HS Commodity Code\"><![CDATA[" + ((Product)product.get(i)).getHscommoditycode() + "]]></FL>");
-	      row = row.concat("<FL val=\"Product Active\"><![CDATA[" + ((Product)product.get(i)).getProductactive() + "]]></FL>");
-	      row = row.concat("<FL val=\"Reference\"><![CDATA[" + ((Product)product.get(i)).getReference() + "]]></FL>");
-	      row = row.concat("<FL val=\"CAT Brand Desc\"><![CDATA[" + ((Product)product.get(i)).getCatbranddesc() + "]]></FL>");
-	      row = row.concat("<FL val=\"CAT Purchase Desc\"><![CDATA[" + ((Product)product.get(i)).getCatpurchasedesc() + "]]></FL>");
-	      row = row.concat("<FL val=\"CAT Sales Desc\"><![CDATA[" + ((Product)product.get(i)).getCatsalesdesc() + "]]></FL>");
-	      row = row.concat("<FL val=\"REF CSGP Desc\"><![CDATA[" + ((Product)product.get(i)).getRefcsgpdesc() + "]]></FL>");
-	      row = row.concat("<FL val=\"REF CSGS Desc\"><![CDATA[" + ((Product)product.get(i)).getRefcsgsdesc() + "]]></FL>");
-	      row = row.concat("<FL val=\"REF CSSC Desc\"><![CDATA[" + ((Product)product.get(i)).getRefcsscdesc() + "]]></FL>");
-	     // row = row.concat("<FL val=\"Last Update Date\"><![CDATA[" + ((Product)product.get(i)).getItemlostupdatedate() + "]]></FL>");
-	     //row = row.concat("<FL val=\"Product Creation Date\"><![CDATA[" + ((Product)product.get(i)).getCreationdate() + "]]></FL>");
-	      row = row.concat("<FL val=\"KWD Price\"><![CDATA[" + ((Product)product.get(i)).getKwdprice() + "]]></FL>");
-	      row = row.concat("<FL val=\"BHD Price\"><![CDATA[" + ((Product)product.get(i)).getBhdprice() + "]]></FL>");
-	      row = row.concat("<FL val=\"OMR Price\"><![CDATA[" + ((Product)product.get(i)).getOmanprice() + "]]></FL>");
-	      row = row.concat("<FL val=\"Taxable\"><![CDATA[" + ((Product)product.get(i)).getVatcategory() + "]]></FL>");
-	      row = row.concat("<FL val=\"Tax\"><![CDATA[" + ((Product)product.get(i)).getTaxrate() + "]]></FL>");
-	      row = row.concat("<FL val=\"Market Price\"><![CDATA[" + ((Product)product.get(i)).getMarketPrice() + "]]></FL></row>");
+	      row = row.concat("<row no=\"" + index + "\"><FL val=\"Product Name\"><![CDATA[" + ((ProductGetSet)product.get(i)).getproductName() + "]]></FL>");
+	      row = row.concat("<FL val=\"Product Description\"><![CDATA[" + ((ProductGetSet)product.get(i)).getProductDescription() + "]]></FL>");
+	      row = row.concat("<FL val=\"Item Brand Desc\"><![CDATA[" + ((ProductGetSet)product.get(i)).getItemBrandDesc() + "]]></FL>");
+	      row = row.concat("<FL val=\"Country of Origin\"><![CDATA[" + ((ProductGetSet)product.get(i)).getCountryofOrigin() + "]]></FL>");
+	      row = row.concat("<FL val=\"Barcode\"><![CDATA[" + ((ProductGetSet)product.get(i)).getBarcode() + "]]></FL>");
+	      row = row.concat("<FL val=\"Item Size\"><![CDATA[" + ((ProductGetSet)product.get(i)).getItemsize() + "]]></FL>");
+	      row = row.concat("<FL val=\"Unit Length\"><![CDATA[" + ((ProductGetSet)product.get(i)).getUnitlength() + "]]></FL>");
+	      row = row.concat("<FL val=\"Unit Width\"><![CDATA[" + ((ProductGetSet)product.get(i)).getUnitwidth() + "]]></FL>");
+	      row = row.concat("<FL val=\"Unit Height\"><![CDATA[" + ((ProductGetSet)product.get(i)).getUnitheight() + "]]></FL>");
+	      row = row.concat("<FL val=\"Unit Weight\"><![CDATA[" + ((ProductGetSet)product.get(i)).getUnitweight() + "]]></FL>");
+	      row = row.concat("<FL val=\"Unit Volume\"><![CDATA[" + ((ProductGetSet)product.get(i)).getUnitvolume() + "]]></FL>");
+	      row = row.concat("<FL val=\"HS Commodity Code\"><![CDATA[" + ((ProductGetSet)product.get(i)).getHscommoditycode() + "]]></FL>");
+	      row = row.concat("<FL val=\"Product Active\"><![CDATA[" + ((ProductGetSet)product.get(i)).getProductactive() + "]]></FL>");
+	      row = row.concat("<FL val=\"Reference\"><![CDATA[" + ((ProductGetSet)product.get(i)).getReference() + "]]></FL>");
+	      row = row.concat("<FL val=\"CAT Brand Desc\"><![CDATA[" + ((ProductGetSet)product.get(i)).getCatbranddesc() + "]]></FL>");
+	      row = row.concat("<FL val=\"CAT Purchase Desc\"><![CDATA[" + ((ProductGetSet)product.get(i)).getCatpurchasedesc() + "]]></FL>");
+	      row = row.concat("<FL val=\"CAT Sales Desc\"><![CDATA[" + ((ProductGetSet)product.get(i)).getCatsalesdesc() + "]]></FL>");
+	      row = row.concat("<FL val=\"REF CSGP Desc\"><![CDATA[" + ((ProductGetSet)product.get(i)).getRefcsgpdesc() + "]]></FL>");
+	      row = row.concat("<FL val=\"REF CSGS Desc\"><![CDATA[" + ((ProductGetSet)product.get(i)).getRefcsgsdesc() + "]]></FL>");
+	      row = row.concat("<FL val=\"REF CSSC Desc\"><![CDATA[" + ((ProductGetSet)product.get(i)).getRefcsscdesc() + "]]></FL>");
+	      row=  row.concat("<FL val=\"Last Update Date\"><![CDATA[" + ((ProductGetSet)product.get(i)).getItemlostupdatedate() + "]]></FL>");
+	      row = row.concat("<FL val=\"Product Creation Date\"><![CDATA[" + ((ProductGetSet)product.get(i)).getCreationdate() + "]]></FL>");
+	      row = row.concat("<FL val=\"KWD Price\"><![CDATA[" + ((ProductGetSet)product.get(i)).getKwdprice() + "]]></FL>");
+	      row = row.concat("<FL val=\"BHD Price\"><![CDATA[" + ((ProductGetSet)product.get(i)).getBhdprice() + "]]></FL>");
+	      row = row.concat("<FL val=\"OMR Price\"><![CDATA[" + ((ProductGetSet)product.get(i)).getOmanprice() + "]]></FL>");
+	      row = row.concat("<FL val=\"Taxable\"><![CDATA[" + ((ProductGetSet)product.get(i)).getVatcategory() + "]]></FL>");
+	      row = row.concat("<FL val=\"Tax\"><![CDATA[" + ((ProductGetSet)product.get(i)).getTaxrate() + "]]></FL>");
+	      row = row.concat("<FL val=\"Market Price\"><![CDATA[" + ((ProductGetSet)product.get(i)).getMarketPrice() + "]]></FL></row>");
 	      
 	      if (i == product.size() - 1)
 	      {
@@ -76,48 +102,36 @@ public class ProductInsert {
 	      row = "";
 	      
 	    }
-	   
-	    
-	    ArrayList<Product> products = null;
-	    try {
-	      products = pi.getAllProducts();
-	    }
-	    catch (IOException ioe) {
-	      ioe.printStackTrace();
-	    }
-	   for(i=0;i<product.size();i++){
+	   	   
+	 /*  for(i=0;i<product.size();i++){
 		   if(count==100){
 			   count=0;
 			   pi.ProductsInsert(s);
 		   }
 	   }
-	   if(count>0)
-	   {
+	   if(count>0){
 		   pi.ProductsInsert(s);
-	   }
-	   // pi.getProductDetails();
-	    //pi.ProductsInsert(s);
+	   }*/
+	 //   pi.getProductDetails();
+	    pi.ProductsInsert(s);
 	   
 	  }
+	 //fetching the sql data in arraylist format 
 	  
-public ArrayList<Product> getAllProducts()
-	    throws ClassNotFoundException, SQLException, IOException
-	  {
-	    String path = "./Rix.properties";
-	    FileInputStream file = new FileInputStream(path);
-	    mainProperties.load(file);
-	    file.close();
+public ArrayList<ProductGetSet> getAllProducts()
+	    throws ClassNotFoundException, SQLException, IOException, ParseException {
+
 	    Connection myConn = null;
 	    PreparedStatement myStmt = null;
 	    Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 	    String sqlurl = mainProperties.getProperty("SqlURL");
 	    myConn = DriverManager.getConnection(sqlurl);
 	    Statement stm = myConn.createStatement();
-	    String sql = "SELECT TOP 1000 [ITEM_CODE],[BARCODE],[ITEM_DESC],[ITEM_BRAND_DESC],[ITEM_SIZE],[UNIT_LENGTH] ,[UNIT_WIDTH] ,[UNIT_HEIGHT] ,[UNIT_WEIGHT] ,[UNIT_VOLUME],[COUNTRY_OF_ORIGIN],[HS_COMMODITY_CODE],[PRODUCT_ACTIVE],[REFERENCE],[MARKET_PRICE_AED],[CAT_BRAND_DESC] ,[CAT_PURCHASE_DESC],[CAT_SALES_DESC],[REF_CSGP_DESC],[REF_CSGS_DESC],[REF_CSSC_DESC] ,[ITEM_LAST_UPDATE_DATE],[CREATION_DATE] ,[KWD_PRICE],[BHD_PRICE] ,[OMAN_PRICE],[VAT_CATEGORY],[TAX_RATE]FROM [dwsdev].[dbo].[JncdmItemDimCrmVW]";
+	    String sql =mainProperties.getProperty("sqlQuery");
 	    ResultSet rs = stm.executeQuery(sql);
-	    ArrayList<Product> ProductList = new ArrayList();
+	    ArrayList<ProductGetSet> ProductList = new ArrayList();
 	    while (rs.next()) {
-	      Product product = new Product();
+	      ProductGetSet product = new ProductGetSet();
 	      product.setproductName(rs.getString("ITEM_CODE"));
 	      product.setProductDescription(rs.getString("ITEM_DESC"));
 	      product.setItemBrandDesc(rs.getString("ITEM_BRAND_DESC"));
@@ -148,24 +162,23 @@ public ArrayList<Product> getAllProducts()
 	      product.setTaxrate(rs.getString("TAX_RATE"));
 	      ProductList.add(product);
 	    }
-	    return ProductList;
-	  }
-	  
-     public String ProductsInsert(String[] s)
+	return ProductList;
+}
+	  //pushing data into zoho crm
+     public String ProductsInsert(String [] s)
 	  {
 	    String updateDetails = null;
 	    String authtoken = mainProperties.getProperty("authtoken");
+	   // String xmlData = mainProperties.getProperty("xmlData");
 	    String scope = "crmapi";
 	    String newFormat = "2";
 	    String version = "4";
-	    String duplicatecheck="1";
+	    //String duplicatecheck="1";
 	    String fromIndex = "1";
 	    String toIndex = "20";
 	    String targetURL = mainProperties.getProperty("targetURL");
 	    String paramname = "content";
-	    
 	    PostMethod post = new PostMethod(targetURL);
-	    
 	    post.setParameter("authtoken", authtoken);
 	    post.setParameter("scope", scope);
 	    post.setParameter("newFormat", newFormat);
@@ -173,21 +186,21 @@ public ArrayList<Product> getAllProducts()
 	    for (int i = 0; i < s.length; i++) {
 	      xmlData = xmlData.concat(s[i]);
 	    }
-	    
+	        
 	    post.setParameter("xmlData", xmlData);
-	    post.setParameter("version", version);
-	    post.setParameter("duplicate", duplicatecheck);
+	  //  post.setParameter("version", version);
+	   // post.setParameter("duplicate", duplicatecheck);
+	   
 	    System.out.println(xmlData);
 	    
-	    HttpClient httpclient = new HttpClient();
 	    
-
-
-
+	    HttpClient httpclient = new HttpClient();
+   
 	    try
 	    {
 	      int result = httpclient.executeMethod(post);
 	      updateDetails = post.getResponseBodyAsString();
+	      System.out.println(updateDetails);
 
 	    }
 	    catch (Exception e)
@@ -202,7 +215,7 @@ public ArrayList<Product> getAllProducts()
 	    return updateDetails;
 	  }
 	  
-
+//fetching data from zoho crm
 	  public String getProductDetails()
 	  {
 	    String productDetails = null;
@@ -215,10 +228,7 @@ public ArrayList<Product> getAllProducts()
 	    String toIndex = "20";
 	    String wfTrigger = "true";
 	    String criteria = "(Trigger Date:" + TodayDate + ")";
-	    
 	    String targetURL = mainProperties.getProperty("targetURL1");
-	    System.out.println("Successful");
-	    
 	    String paramname = "content";
 	    PostMethod post = new PostMethod(targetURL);
 	    post.setParameter("authtoken", authtoken);
@@ -230,7 +240,6 @@ public ArrayList<Product> getAllProducts()
 	    post.setParameter("wfTrigger", wfTrigger);
 	    post.setParameter("criteria", criteria);
 	    
-
 	    HttpClient httpclient = new HttpClient();
 	    try {
 	      long t1 = System.currentTimeMillis();
@@ -239,21 +248,22 @@ public ArrayList<Product> getAllProducts()
 	      productDetails = post.getResponseBodyAsString();
 	      
 	      post.getParameter("Product Name");
-
-
-
 	    }
 	    catch (Exception localException) {}finally
 	    {
-
-
-
 	      post.releaseConnection();
 	    }
-	    
-	    return productDetails;
+	 return productDetails;
+ }
+	  //loading the property life 
+	  public void LoadProperties() throws IOException{
+		  
+		  String path = "./Rix.properties";
+		    FileInputStream file = new FileInputStream(path);
+		    mainProperties.load(file);
+		    file.close();
 	  }
-	}
+}
 
 
 
