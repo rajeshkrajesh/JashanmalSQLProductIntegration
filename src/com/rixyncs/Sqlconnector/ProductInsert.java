@@ -137,18 +137,16 @@ public class ProductInsert {
   	    public String productsInsert(String[] s){
 		   
 		    String xmlData = "";
-		    /*for (int i = 0; i < s.length; i++) {
-		      xmlData = xmlData.concat(s[i]);
-		    }*/
-		    
-		  //more than 100 records
+		   
+		  //inserting in batches of 100 records
 		    String updateDetails="";
 		    int count=0;
 		    int insertedCount =0;
 		    xmlData = "<Products>";
 		    for(int i=0;i<s.length;i++){
-     	    	   xmlData = xmlData.concat(s[i]);
+     	    	   
 				   if(count==100){
+					   xmlData = xmlData.concat(s[i]);
 					   xmlData =xmlData.concat("</Products>");
 					   System.out.println("count values "+count+"   "+i);
  	                   updateDetails=insertBatch(xmlData);
@@ -185,13 +183,13 @@ public class ProductInsert {
 			String duplicatecheck="2";
 			String fromIndex = "1";
 			String toIndex = "20";
-			String targetURL = mainProperties.getProperty("targetURL");
+			String targetURL = mainProperties.getProperty("targetURL1");
 			String paramname = "content";
 			PostMethod post = new PostMethod(targetURL);
 			post.setParameter("authtoken", authtoken);
 			post.setParameter("scope", scope);
 			post.setParameter("newFormat", newFormat);
-			post.setParameter("duplicate", duplicatecheck);
+			post.setParameter("duplicatecheck",duplicatecheck);
 			post.setParameter("xmlData", xmlData);
 			post.setParameter("version", version);
 			  
@@ -228,12 +226,9 @@ public class ProductInsert {
 		    	ProductInsert pi=new ProductInsert();
 		    	pi.loadProperties();
 		    	ArrayList<ProductGetSet> product = pi.getAllProducts();
-		    	//ArrayList<ProductGetSet> product=pi.testData(600000);
-		    	//System.out.println("data " +product.size());
-		    	String[] als=pi.formZohoXml(product);
-		    	//System.out.println("als "+als.length);
-		    	pi.productsInsert(als);
-		    	//System.out.println(als[1]);
+		    	//ArrayList<ProductGetSet> product=pi.testData(600000);		    	
+		    	String[] als=pi.formZohoXml(product);		    	
+		    	pi.productsInsert(als);		    	
 	    	}catch(Exception e){
 	    		e.printStackTrace();
 	    	}
