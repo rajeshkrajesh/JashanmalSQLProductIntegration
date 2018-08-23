@@ -13,19 +13,19 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 //pushing the invoice header data into zoho transaction module 
-public class InvoiceHeader {
+public class ContactInsert {
 						
 		public  Properties mainProperties = new Properties();
-		public InvoiceHeader() throws IOException{		
+		public ContactInsert() throws IOException{		
 		mainProperties=Utility.loadProperties();
 		}
 		
 	//reading the csv 
-		public ArrayList<InvoiceGetSet> getAllInvoice(){
-			ArrayList<InvoiceGetSet> invoice=new  ArrayList<InvoiceGetSet>();
+		public ArrayList<ContactsGetSet> getAllContacts(){
+			ArrayList<ContactsGetSet> contacts=new  ArrayList<ContactsGetSet>();
 			 int rowCount = -1;
 		        try {	         
-		            String customercsv=mainProperties.getProperty("invoicecsvpath");
+		            String customercsv=mainProperties.getProperty("customercsv");
 		            BufferedReader csvFileReader;
 	   	            csvFileReader = new BufferedReader(new FileReader(customercsv));
 		            
@@ -36,28 +36,21 @@ public class InvoiceHeader {
 		           
 		            /* Initialize the current line variable */
 		            String currLine = csvFileReader.readLine();		            
-		            		           		            
+		            System.out.println(currLine);
 		            /* reading rows from the CSV file */
 		            while((currLine = csvFileReader.readLine()) != null) {
-		            	InvoiceGetSet in=new InvoiceGetSet();
+		            	ContactsGetSet ct=new ContactsGetSet();
 		                stringTokenizer = new StringTokenizer(currLine, ",");
 		                fieldCount = stringTokenizer.countTokens();
 		                /* if rows exist in the CSV file*/
 		                if(fieldCount > 0) {
 		                	
 		                    /* Create the row element*/		                	
-		                	in.setTranscationNo(String.valueOf(stringTokenizer.nextElement()));
-		                	in.setStoreCode(String.valueOf(stringTokenizer.nextElement()));
-		                	in.setStorecityID(String.valueOf(stringTokenizer.nextElement()));
-		                	in.setStoreUniqueReference(String.valueOf(stringTokenizer.nextElement()));
-		                	in.setPurchaseDateTime(String.valueOf(stringTokenizer.nextElement()));
-		                	in.setCashierName(String.valueOf(stringTokenizer.nextElement()));
-		                	in.setCurrency(String.valueOf(stringTokenizer.nextElement()));
-		                	in.setTrxTotal(String.valueOf(stringTokenizer.nextElement()));
-		                	in.setVATTotal(String.valueOf(stringTokenizer.nextElement()));
-		                	in.setTotalQuantity(String.valueOf(stringTokenizer.nextElement()));
-		                	//in.setCustomerName(String.valueOf(stringTokenizer.nextElement()));
-		                	invoice.add(in);	                               	    
+		                	ct.setLastName(String.valueOf(stringTokenizer.nextElement()));
+		                	ct.setMobile(String.valueOf(stringTokenizer.nextElement()));
+		                	ct.setCustomerId(String.valueOf(stringTokenizer.nextElement()));
+		                	
+		                	contacts.add(ct);	                               	    
 		                }
 		               
 		            }
@@ -70,31 +63,23 @@ public class InvoiceHeader {
 		            System.err.println(exp.toString());
 		        }
 		        /* Number of rows parsed into XML */
-		    return invoice;
+		    return contacts;
 		}
 		
 	//csv data to zoho xml form
-		public String[] formZohoXml( ArrayList<InvoiceGetSet> invoice ) throws ClassNotFoundException, SQLException, IOException, ParseException{
+		public String[] formZohoXml( ArrayList<ContactsGetSet> contacts ) throws ClassNotFoundException, SQLException, IOException, ParseException{
 			  
 			  //converting the sql arraylist into zoho xml data			  
-			    String[] s = new String[invoice.size()];
+			    String[] s = new String[contacts.size()];
 			    int count=0;
 			    int i = 0;
   			    String row="";
-			    for (i = 0; i < invoice.size(); i++) {
+			    for (i = 0; i < contacts.size(); i++) {
 			      int index = i + 1;			    
 			      row = row.concat("<row no=\"" + index + "\">");
-			      row = row.concat("<FL val=\"Transaction No\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getTranscationNo() + "]]></FL>");
-			      row = row.concat("<FL val=\"Store Code\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getStoreCode() + "]]></FL>");
-			      row = row.concat("<FL val=\"Storecity ID\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getStorecityID() + "]]></FL>");
-			      row = row.concat("<FL val=\"Store Unique Reference\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getStoreUniqueReference() + "]]></FL>");
-			      row = row.concat("<FL val=\"Purchase DateTime\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getPurchaseDateTime() + "]]></FL>");
-			      row = row.concat("<FL val=\"Cashier Name\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getCashierName() + "]]></FL>");
-			      row = row.concat("<FL val=\"Currency\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getCurrency() + "]]></FL>");
-			      row = row.concat("<FL val=\"Trx Total\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getTrxTotal() + "]]></FL>");
-			      row = row.concat("<FL val=\"VAT Total\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getVATTotal() + "]]></FL>");
-			      row = row.concat("<FL val=\"Total Quantity\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getTotalQuantity() + "]]></FL>");
-			      row = row.concat("<FL val=\"Customer Name\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getCustomerName() + "@email.com]]></FL>");
+			      row = row.concat("<FL val=\"Last Name\"><![CDATA[" + ((ContactsGetSet)contacts.get(i)).getLastName() + "]]></FL>");
+			      row = row.concat("<FL val=\"Mobile\"><![CDATA[" + ((ContactsGetSet)contacts.get(i)).getMobile() + "]]></FL>");
+			      row = row.concat("<FL val=\"Customer Id\"><![CDATA[" + ((ContactsGetSet)contacts.get(i)).getCustomerId() + "]]></FL>");
 			      row = row.concat("</row>");
 			      s[i] = row;
 			      row = "";
@@ -103,7 +88,7 @@ public class InvoiceHeader {
 		}
 		
 	//pushing data into zoho crm
-  	    public String invoiceInsert(String[] s){
+  	    public String contactsInsert(String[] s){
 		   
 		    String xmlData = "";		   
 		    		  		    
@@ -111,19 +96,19 @@ public class InvoiceHeader {
 		    String updateDetails="";
 		    int count=0;
 		    int insertedCount =0;
-		    xmlData = "<Transactions>";
+		    xmlData = "<Contacts>";
 		    for(int i=0;i<s.length;i++){
      	    	  
 				   if(count==100){
 					   xmlData = xmlData.concat(s[i]);
-					   xmlData =xmlData.concat("</Transactions>");
+					   xmlData =xmlData.concat("</Contacts>");
 					   System.out.println("count values "+count+"   "+i);
  	                   updateDetails=insertBatch(xmlData);
          			 
          			   count=0;
            			   insertedCount=insertedCount+100;
          			   xmlData="";
-         			   xmlData="<Transactions>";
+         			   xmlData="<Contacts>";
 				   }
 	  			  count=count+1;
 	  			 
@@ -133,7 +118,7 @@ public class InvoiceHeader {
 		    	for(int i=insertedCount;i<s.length;i++){
 		    	   xmlData = xmlData.concat(s[i]);		    	 
 		    	}
-				   xmlData =xmlData.concat("</Transactions>");
+				   xmlData =xmlData.concat("</Contacts>");
 				   System.out.println("count values for less than 100 records");
 				   updateDetails=insertBatch(xmlData);				   
 			}
@@ -149,8 +134,8 @@ public class InvoiceHeader {
 			String newFormat = "2";
 			String version = "4";			
 			String duplicatecheck="2";			
-			String targetURL = mainProperties.getProperty("targetURL");			
-			PostMethod post = new PostMethod(targetURL);
+			String targetURL3 = mainProperties.getProperty("targetURL3");			
+			PostMethod post = new PostMethod(targetURL3);
 			post.setParameter("authtoken", authtoken);
 			post.setParameter("scope", scope);
 			post.setParameter("newFormat", newFormat);
@@ -175,15 +160,12 @@ public class InvoiceHeader {
   	  }
   	  
 		    				
-	//mian method
+	//main method
 		public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, ParseException {
-			InvoiceHeader ih=new InvoiceHeader();
-			ArrayList<InvoiceGetSet> invoice = ih.getAllInvoice();		
-			String[] als=ih.formZohoXml(invoice);			
-			ih.invoiceInsert(als);			
+			ContactInsert ci=new ContactInsert();
+			ArrayList<ContactsGetSet> contacts = ci.getAllContacts();		
+			String[] als=ci.formZohoXml(contacts);			
+		    ci.contactsInsert(als);			
 		}		
 
 }
-
-
-
