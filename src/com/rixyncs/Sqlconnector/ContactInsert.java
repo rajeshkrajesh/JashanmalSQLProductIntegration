@@ -98,9 +98,9 @@ public class ContactInsert {
 		    int insertedCount =0;
 		    xmlData = "<Contacts>";
 		    for(int i=0;i<s.length;i++){
-     	    	  
+		    	  xmlData = xmlData.concat(s[i]);
 				   if(count==100){
-					   xmlData = xmlData.concat(s[i]);
+					 
 					   xmlData =xmlData.concat("</Contacts>");
 					   System.out.println("count values "+count+"   "+i);
  	                   updateDetails=insertBatch(xmlData);
@@ -115,6 +115,7 @@ public class ContactInsert {
 		    }
 		    System.out.println("count "+count+" insertedCount "+insertedCount);
 		    if(count>0){
+		    	xmlData=("<Contacts>");
 		    	for(int i=insertedCount;i<s.length;i++){
 		    	   xmlData = xmlData.concat(s[i]);		    	 
 		    	}

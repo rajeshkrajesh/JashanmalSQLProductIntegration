@@ -56,7 +56,7 @@ public class InvoiceHeader {
 		                	in.setTrxTotal(String.valueOf(stringTokenizer.nextElement()));
 		                	in.setVATTotal(String.valueOf(stringTokenizer.nextElement()));
 		                	in.setTotalQuantity(String.valueOf(stringTokenizer.nextElement()));
-		                	//in.setCustomerName(String.valueOf(stringTokenizer.nextElement()));
+		                	in.setCustomerName(String.valueOf(stringTokenizer.nextElement()));
 		                	invoice.add(in);	                               	    
 		                }
 		               
@@ -94,7 +94,7 @@ public class InvoiceHeader {
 			      row = row.concat("<FL val=\"Trx Total\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getTrxTotal() + "]]></FL>");
 			      row = row.concat("<FL val=\"VAT Total\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getVATTotal() + "]]></FL>");
 			      row = row.concat("<FL val=\"Total Quantity\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getTotalQuantity() + "]]></FL>");
-			      row = row.concat("<FL val=\"Customer Name\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getCustomerName() + "@email.com]]></FL>");
+			      row = row.concat("<FL val=\"Customer Name\"><![CDATA[" + ((InvoiceGetSet)invoice.get(i)).getCustomerName() + "]]></FL>");
 			      row = row.concat("</row>");
 			      s[i] = row;
 			      row = "";
@@ -113,10 +113,9 @@ public class InvoiceHeader {
 		    int insertedCount =0;
 		    xmlData = "<Transactions>";
 		    for(int i=0;i<s.length;i++){
-     	    	  
+		    	   xmlData = xmlData.concat(s[i]);
 				   if(count==100){
-					   xmlData = xmlData.concat(s[i]);
-					   xmlData =xmlData.concat("</Transactions>");
+   					   xmlData =xmlData.concat("</Transactions>");
 					   System.out.println("count values "+count+"   "+i);
  	                   updateDetails=insertBatch(xmlData);
          			 
@@ -130,6 +129,7 @@ public class InvoiceHeader {
 		    }
 		    System.out.println("count "+count+" insertedCount "+insertedCount);
 		    if(count>0){
+		    	xmlData=("<Transactions>");
 		    	for(int i=insertedCount;i<s.length;i++){
 		    	   xmlData = xmlData.concat(s[i]);		    	 
 		    	}
@@ -156,7 +156,8 @@ public class InvoiceHeader {
 			post.setParameter("newFormat", newFormat);
 			post.setParameter(" duplicateCheck", duplicatecheck);
 			post.setParameter("xmlData", xmlData);
-			post.setParameter("version", version);			
+			post.setParameter("version", version);
+			//post.setParameter("wfTrigger", "true");
 			  
 			    System.out.println(xmlData);
 			    HttpClient httpclient = new HttpClient();
@@ -175,7 +176,7 @@ public class InvoiceHeader {
   	  }
   	  
 		    				
-	//mian method
+	//main method
 		public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, ParseException {
 			InvoiceHeader ih=new InvoiceHeader();
 			ArrayList<InvoiceGetSet> invoice = ih.getAllInvoice();		

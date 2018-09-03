@@ -81,6 +81,7 @@ public class ProductInsert {
 			      product.setVatcategory(rs.getString("VAT_CATEGORY"));
 			      product.setTaxrate(rs.getString("TAX_RATE"));
 			      ProductList.add(product);
+			      product = null;
 		      }
 	     return ProductList;
   	    }
@@ -144,9 +145,9 @@ public class ProductInsert {
 		    int insertedCount =0;
 		    xmlData = "<Products>";
 		    for(int i=0;i<s.length;i++){
-     	    	   
+		    	  xmlData = xmlData.concat(s[i]);
 				   if(count==100){
-					   xmlData = xmlData.concat(s[i]);
+					   
 					   xmlData =xmlData.concat("</Products>");
 					   System.out.println("count values "+count+"   "+i);
  	                   updateDetails=insertBatch(xmlData);
@@ -161,6 +162,7 @@ public class ProductInsert {
 		    }
 		    System.out.println("count "+count+" insertedCount "+insertedCount);
 		    if(count>0){
+		    	xmlData=("<Products>");
 		    	for(int i=insertedCount;i<s.length;i++){
 		    	   xmlData = xmlData.concat(s[i]);
 		    	}
@@ -189,7 +191,7 @@ public class ProductInsert {
 			post.setParameter("authtoken", authtoken);
 			post.setParameter("scope", scope);
 			post.setParameter("newFormat", newFormat);
-			post.setParameter("duplicatecheck",duplicatecheck);
+			post.setParameter("duplicateCheck",duplicatecheck);
 			post.setParameter("xmlData", xmlData);
 			post.setParameter("version", version);
 			  
@@ -206,10 +208,12 @@ public class ProductInsert {
 			    finally {
 			      post.releaseConnection();
 			    }
+		   	    post = null;
+		   	    httpclient = null;
 		   	    return updateDetails;
   	  }
   	  
-  /*	public ArrayList<ProductGetSet> testData(int x) {
+  	/*public ArrayList<ProductGetSet> testData(int x) {
 		  ArrayList<ProductGetSet> p=new ArrayList();
 		  for(int i=0;i<x;i++)
 		  {
@@ -226,7 +230,7 @@ public class ProductInsert {
 		    	ProductInsert pi=new ProductInsert();
 		    	pi.loadProperties();
 		    	ArrayList<ProductGetSet> product = pi.getAllProducts();
-		    	//ArrayList<ProductGetSet> product=pi.testData(600000);		    	
+		         //ArrayList<ProductGetSet> product=pi.testData(1160);		    	
 		    	String[] als=pi.formZohoXml(product);		    	
 		    	pi.productsInsert(als);		    	
 	    	}catch(Exception e){

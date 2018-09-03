@@ -91,8 +91,7 @@ public class InvoiceLineItems {
 				      row = row.concat("<FL val=\"Full Price\"><![CDATA[" + ((LineItemGetSet)line.get(i)).getFullPrice() + "]]></FL>");
 				      row = row.concat("<FL val=\"Arabic Description\"><![CDATA[" + ((LineItemGetSet)line.get(i)).getArabicDescription() + "]]></FL>");
 				      row = row.concat("<FL val=\"Sales Rep Name \"><![CDATA[" + ((LineItemGetSet)line.get(i)).getSalesRepName() + "]]></FL>");
-				     
-				      
+				     				      
 				      row = row.concat("</row>");
 				      s[i] = row;
 				      row = "";
@@ -109,11 +108,11 @@ public class InvoiceLineItems {
 			    String updateDetails="";
 			    int count=0;
 			    int insertedCount =0;
-			    xmlData = "<Line_Items>";
+			    xmlData = "<LineItems>";
 			    for(int i=0;i<s.length;i++){
-	     	    	  
+			    	   xmlData = xmlData.concat(s[i]);
 					   if(count==100){
-						   xmlData = xmlData.concat(s[i]);
+						   
 						   xmlData =xmlData.concat("</LineItems>");
 						   System.out.println("count values "+count+"   "+i);
 	 	                   updateDetails=insertBatch(xmlData);
@@ -128,10 +127,11 @@ public class InvoiceLineItems {
 			    }
 			    System.out.println("count "+count+" insertedCount "+insertedCount);
 			    if(count>0){
+			    	xmlData=("<LineItems>");
 			    	for(int i=insertedCount;i<s.length;i++){
 			    	   xmlData = xmlData.concat(s[i]);		    	 
 			    	}
-					   xmlData =xmlData.concat("</Line_Items>");
+					   xmlData =xmlData.concat("</LineItems>");
 					   System.out.println("count values for less than 100 records");
 					   updateDetails=insertBatch(xmlData);				   
 				}
